@@ -1,0 +1,58 @@
+# 启动时是否打印配置参数
+PrintConfig = true
+
+# 分布式链路追踪
+[JAEGER]
+Disabled = false
+SamplerParam = 1
+ServiceName = "chatServer"
+
+[Log]
+# 日志级别(1:fatal 2:error,3:warn,4:info,5:debug,6:trace)
+Level = 4
+# 日志格式（支持输出格式：text/json）
+Format = "json"
+# 日志输出(支持：stdout/stderr/file)
+Output = "file"
+# 指定日志输出的文件路径
+OutputFile = "log/chatserver.log"
+# 日志轮询数量
+RotationCount = 48
+# 日志轮询时间周期 单位：秒
+RotationTime = 1800
+
+# 指标报告
+[metrics.statsd]
+enabled = false
+[metrics.prometheus]
+enabled = false
+
+[pitaya.metrics.prometheus]
+port = 9094
+
+[pitaya.cluster.sd.etcd]
+endpoints = ["localhost:2379"]
+[pitaya.cluster.sd.etcd.syncservers]
+interval = 120000000000
+
+[pitaya.modules.bindingstorage.etcd]
+endpoints = ["localhost:2379"]
+
+#每个代理收到的客户端消息的缓冲区大小
+[pitaya.buffer.agent]
+messages = 100
+
+[pitaya.buffer.handler]
+localprocess = 20  #处理程序接收并在本地处理的消息的缓冲区大小
+remoteprocess = 20 #处理程序接收并转发到远程服务器的消息的缓冲区大小
+
+#在处理程序服务中处理消息的 go例程数
+[pitaya.concurrency.handler]
+dispatch = 25
+
+[pitaya.cluster.rpc.server.nats.buffer]
+messages = 75 # nats RPC 服务器在开始丢弃传入消息之前接受的缓冲区大小
+push = 100 # nats RPC 服务器为推送消息创建的缓冲区的大小
+
+[pitaya.cluster.rpc.server.nats]
+services = 30 # 在 nats RPC 服务的远程服务上处理消息的 go例程数

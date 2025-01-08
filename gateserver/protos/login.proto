@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package login_protos;
+option go_package = "./";
+
+message LoginReq {
+  string Username = 1;
+  string Password = 2;
+  string Hardware = 3;
+}
+
+message LoginRsp {
+  string Username = 1;
+  string Password = 2;
+  string Token = 3;
+  int64 UId = 4;
+}
+
+message ReLoginReq {
+  string Token = 1;
+  string IP = 2;
+  string Hardware = 3;
+}
+
+message ReLoginRsp {
+  string Token = 1;
+}
+
+message LogoutReq {
+}
+
+message LogoutRsp {
+}

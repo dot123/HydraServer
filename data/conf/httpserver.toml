@@ -1,0 +1,108 @@
+# 运行模式(debug:调试,release:正式)
+RunMode = "debug"
+
+# 是否启用swagger
+Swagger = true
+
+# 启动时是否打印配置参数
+PrintConfig = true
+
+[HTTP]
+# http监听地址
+Host = "0.0.0.0"
+# 证书路径
+CertFile = ""
+# 证书密钥
+KeyFile = ""
+# http优雅关闭等待超时时长(单位秒)
+ShutdownTimeout = 30
+# 允许的最大内容长度(64M)
+MaxContentLength = 67108864
+# 允许输出的最大请求日志长度
+MaxReqLoggerLength = 1024
+
+[Log]
+# 日志级别(1:fatal 2:error,3:warn,4:info,5:debug,6:trace)
+Level = 4
+# 日志格式（支持输出格式：text/json）
+Format = "json"
+# 日志输出(支持：stdout/stderr/file)
+Output = "file"
+# 指定日志输出的文件路径
+OutputFile = "log/httpserver.log"
+# 日志轮询数量
+RotationCount = 48
+# 日志轮询时间周期 单位：秒
+RotationTime = 1800
+
+# 请求频率限制
+[RateLimiter]
+# 是否启用
+Enable = true
+# 最大处理数
+Count = 300
+
+[CORS]
+# 是否启用
+Enable = true
+# 允许跨域请求的域名列表(*表示全部允许)
+AllowOrigins = ["*"]
+# 允许跨域请求的请求方式列表
+AllowMethods = ["GET", "POST", "PUT", "DELETE", "PATCH"]
+# 允许客户端与跨域请求一起使用的非简单标头的列表
+AllowHeaders = [
+    "Content-Type",
+    "Content-Length",
+    "Accept-Encoding",
+    "X-CSRF-Token",
+    "Authorization",
+    "accept",
+    "origin",
+    "Cache-Control",
+    "X-Requested-With",
+]
+# 请求是否可以包含cookie，HTTP身份验证或客户端SSL证书等用户凭据
+AllowCredentials = true
+# 可以缓存预检请求结果的时间（以秒为单位）
+MaxAge = 7200
+
+[GZIP]
+# 是否启用
+Enable = true
+# 排除的文件扩展名
+ExcludedExtentions = [".png", ".gif", ".jpeg", ".jpg"]
+# 排除的请求路径
+ExcludedPaths = []
+
+[Gorm]
+# 是否开启调试模式
+Debug = true
+# 设置连接可以重用的最长时间(单位：秒)
+MaxLifetime = 7200
+# 设置数据库的最大打开连接数
+MaxOpenConns = 150
+# 设置空闲连接池中的最大连接数
+MaxIdleConns = 50
+# 数据库表名前缀
+TablePrefix = ""
+# 是否启用自动映射数据库表结构
+EnableAutoMigrate = false
+# 日志文件
+LogOutputFile = "log/gorm-httpserver.log"
+
+[MySQL]
+# 连接地址
+Host = "127.0.0.1"
+# 连接端口
+Port = 3306
+# 用户名
+User = "root"
+# 密码
+Password = "pwd123456"
+# 数据库
+DBName = "hydra-login"
+# 连接参数
+Parameters = "charset=utf8mb4&parseTime=True&loc=Local&allowNativePasswords=true"
+
+[etcd]
+endpoints = ["localhost:2379"]

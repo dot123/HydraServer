@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package chat_protos;
+option go_package = "./";
+
+message LoginReq {
+    string ServerID = 1;
+}
+
+message LoginRsp {
+}
+
+message ChatReq {
+  int32 Type = 1;  // 0世界聊天、1联盟聊天
+  string Msg = 2;
+}
+
+message ChatMsg {
+  int64 RId = 1;
+  string NickName = 2;
+  int32 Type = 3;  // 0世界聊天、1联盟聊天
+  string Msg = 4;
+  int64 Time = 5;
+}
+
+message HistoryReq {
+  int32 Type = 1;  // 0世界聊天、1联盟聊天
+}
+
+message HistoryRsp {
+  int32 Type = 1;  // 0世界聊天、1联盟聊天
+  repeated ChatMsg Msgs = 2;
+}
+
+message JoinReq {
+  int32 Type = 1;  // 0世界聊天、1联盟聊天
+  int64 Id = 2;
+}
+
+message JoinRsp {
+  int32 Type = 1;  // 0世界聊天、1联盟聊天
+  int64 Id = 2;
+}
+
+message ExitReq {
+  int32 Type = 1;  // 0世界聊天、1联盟聊天
+}
+
+message ExitRsp {
+  int32 Type = 1;  // 0世界聊天、1联盟聊天
+}

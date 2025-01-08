@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package game_protos;
+option go_package = "./";
+
+message Role {
+  int64 RId = 1;
+  int64 UId = 2;
+  string NickName = 3;
+  int32 Sex = 4;
+  int64 HeadId = 5;
+}
+
+message EnterServerReq {
+  string Token = 1;
+}
+
+message EnterServerRsp {
+  Role Role = 1;
+  int64 Time = 2;
+  string ServerID = 3;
+}
+
+message CreateRoleReq  {
+  string NickName = 1;
+  int32 Sex = 2;
+  int64 HeadId = 3;
+}
+
+message CreateRoleRsp  {
+  Role Role = 1;
+}
+
+message ChangeNickNameReq {
+  string NickName = 1;
+}
+
+message ChangeNickNameRsp {
+}
+
+message Ping {
+  int64 Time = 1;
+}
+
+message Pong {
+  int64 Delay = 1;
+}

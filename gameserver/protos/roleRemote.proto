@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package game_protos;
+option go_package = "./";
+
+import "role.proto";
+
+message GetRoleReq {
+  int64 RId = 1;
+}
+
+message GetRoleRsp {
+  int64 RId = 1;
+  Role Role = 2;
+}

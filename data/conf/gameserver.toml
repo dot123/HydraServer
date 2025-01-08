@@ -1,0 +1,124 @@
+# 启动时是否打印配置参数
+PrintConfig = true
+
+[Gorm]
+# 是否开启调试模式
+Debug = true
+# 设置连接可以重用的最长时间(单位：秒)
+MaxLifetime = 7200
+# 设置数据库的最大打开连接数
+MaxOpenConns = 150
+# 设置空闲连接池中的最大连接数
+MaxIdleConns = 50
+# 数据库表名前缀
+TablePrefix = ""
+# 是否启用自动映射数据库表结构
+EnableAutoMigrate = true
+# 日志文件
+LogOutputFile = "log/gorm-gameserver.log"
+
+[MySQL]
+# 连接地址
+Host = "127.0.0.1"
+# 连接端口
+Port = 3306
+# 用户名
+User = "root"
+# 密码
+Password = "pwd123456"
+# 数据库
+DBName = "hydra-game"
+# 连接参数
+Parameters = "charset=utf8mb4&parseTime=True&loc=Local&allowNativePasswords=true"
+
+# 分布式链路追踪
+[JAEGER]
+Disabled = false
+SamplerParam = 1
+ServiceName = "gameServer"
+
+[Log]
+# 日志级别(1:fatal 2:error,3:warn,4:info,5:debug,6:trace)
+Level = 4
+# 日志格式（支持输出格式：text/json）
+Format = "json"
+# 日志输出(支持：stdout/stderr/file)
+Output = "file"
+# 指定日志输出的文件路径
+OutputFile = "log/gameserver.log"
+# 日志轮询数量
+RotationCount = 48
+# 日志轮询时间周期 单位：秒
+RotationTime = 1800
+
+[RedisBackend]
+# 地址
+Addrs = ["localhost:6379"]
+DB = 0
+MaxRetries = 3
+Username = ""
+Password = ""
+# 连接池大小
+PoolSize = 2000
+# 最小空闲连接数
+MinIdleConns = 500
+# 连接最大生命周期（秒）
+ConnMaxLifetime = 1800
+# 连接在池中保持空闲的最大时间（秒）
+ConnMaxIdleTime = 600
+# 连接超时时间 5 秒
+DialTimeout = 5
+# 读取超时时间 3 秒
+ReadTimeout = 3
+# 写入超时时间 3 秒
+WriteTimeout = 3
+
+# 指标报告
+[metrics.statsd]
+enabled = false
+[metrics.prometheus]
+enabled = false
+
+[pitaya.metrics.prometheus]
+port = 9093
+
+[pitaya.cluster.sd.etcd]
+endpoints = ["localhost:2379"]
+[pitaya.cluster.sd.etcd.syncservers]
+interval = 120000000000
+
+[pitaya.modules.bindingstorage.etcd]
+endpoints = ["localhost:2379"]
+
+#[pitaya.metrics.custom]
+#counters = [
+#    { subsystem = "role", name = "my_counter", help = "a counter example", labels = ['tag1', 'tag2'] }
+#]
+#
+#gauges = [
+#    { subsystem = "role", name = "my_gauge_1", help = "a gauge example", labels = ['tag1'] },
+#    { subsystem = "role", name = "my_gauge_2", help = "a gauge example", labels = ['tag2'] },
+#]
+#
+#summaries = [
+#    { subsystem = "role", name = "my_summary", help = "a summary example", objectives = {"0.7" = 0.05, "0.9" = 0.01, "0.99" = 0.001}, labels = ['tag1'] },
+#]
+
+#每个代理收到的客户端消息的缓冲区大小
+[pitaya.buffer.agent]
+messages = 100
+
+[pitaya.buffer.handler]
+localprocess = 20  #处理程序接收并在本地处理的消息的缓冲区大小
+remoteprocess = 20 #处理程序接收并转发到远程服务器的消息的缓冲区大小
+
+#在处理程序服务中处理消息的 go例程数
+[pitaya.concurrency.handler]
+dispatch = 25
+
+[pitaya.cluster.rpc.server.nats.buffer]
+messages = 75 # nats RPC 服务器在开始丢弃传入消息之前接受的缓冲区大小
+push = 100 # nats RPC 服务器为推送消息创建的缓冲区的大小
+
+[pitaya.cluster.rpc.server.nats]
+services = 30 # 在 nats RPC 服务的远程服务上处理消息的 go例程数

@@ -1,0 +1,17 @@
+[
+  "gate.account.login",
+  "gate.account.logout",
+  "gate.account.relogin",
+
+  "game.role.enterserver",
+  "game.role.create",
+  "game.role.changenickname",
+  "game.role.ping",
+
+  "chat.chat.enter",
+  "chat.chat.join",
+  "chat.chat.exit",
+  "chat.chat.chat",
+  "chat.chat.history",
+  "onMessage"
+]
