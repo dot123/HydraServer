@@ -2,11 +2,11 @@ package locate
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 const (
-	defaultPrefix = "magic"
+	defaultPrefix = "Hydra"
 )
 
 type Config struct {

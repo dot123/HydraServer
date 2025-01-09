@@ -3,8 +3,9 @@ package locate
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/sync/singleflight"
 	"sort"
 	"strings"
@@ -12,10 +13,9 @@ import (
 )
 
 const (
-	userGateKey            = "%s:locate:user:%d:gate"     // string
-	userNodeKey            = "%s:locate:user:%d:node"     // hash
-	clusterEventKey        = "%s:locate:cluster:%s:event" // channel
-	serverOnlineUserNumKey = "%s:locate:server:%s:num"    // num
+	userGateKey     = "%s:locate:user:%d:gate"     // string
+	userNodeKey     = "%s:locate:user:%d:node"     // hash
+	clusterEventKey = "%s:locate:cluster:%s:event" // channel
 )
 
 type Event struct {
@@ -86,38 +86,12 @@ func NewLocator(ctx context.Context, config *Config) *Locator {
 	return l
 }
 
-// GetOnlineUserNum 获取在线人数
-func (l *Locator) GetOnlineUserNum(ctx context.Context, serverType string, serverID string) (int64, error) {
-	key := fmt.Sprintf(serverOnlineUserNumKey, l.opts.prefix, serverType)
-	val, err, _ := l.sfg.Do(key, func() (interface{}, error) {
-		val, err := l.opts.client.HGet(ctx, key, serverID).Int64()
-		if err != nil && err != redis.Nil {
-			return -1, err
-		}
-
-		return val, nil
-	})
-	if err != nil {
-		return -1, err
-	}
-
-	return val.(int64), nil
-}
-
-// SetOnlineUserNum 设置在线人数
-func (l *Locator) SetOnlineUserNum(ctx context.Context, serverType string, serverID string, num int64) error {
-	key := fmt.Sprintf(serverOnlineUserNumKey, l.opts.prefix, serverType)
-	err := l.opts.client.HSet(ctx, key, serverID, num).Err()
-
-	return err
-}
-
 // LocateGate 定位用户所在网关
 func (l *Locator) LocateGate(ctx context.Context, uid int64) (string, error) {
 	key := fmt.Sprintf(userGateKey, l.opts.prefix, uid)
 	val, err, _ := l.sfg.Do(key, func() (interface{}, error) {
 		val, err := l.opts.client.Get(ctx, key).Result()
-		if err != nil && err != redis.Nil {
+		if err != nil && !errors.Is(err, redis.Nil) {
 			return "", err
 		}
 
@@ -135,7 +109,7 @@ func (l *Locator) LocateNode(ctx context.Context, uid int64, name string) (strin
 	key := fmt.Sprintf(userNodeKey, l.opts.prefix, uid)
 	val, err, _ := l.sfg.Do(key+name, func() (interface{}, error) {
 		val, err := l.opts.client.HGet(ctx, key, name).Result()
-		if err != nil && err != redis.Nil {
+		if err != nil && !errors.Is(err, redis.Nil) {
 			return "", err
 		}
 
