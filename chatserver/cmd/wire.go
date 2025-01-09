@@ -6,11 +6,12 @@
 package main
 
 import (
+	"HydraServer/pkg/redisbackend"
 	"github.com/google/wire"
 	"github.com/topfreegames/pitaya/v2"
 )
 
-func BuildInjector(*pitaya.Pitaya) (*Injector, func(), error) {
+func BuildInjector(*pitaya.Pitaya, *redisbackend.RedisBackend) (*Injector, func(), error) {
 	wire.Build(ServiceSet, InjectorSet)
 	return new(Injector), nil, nil
 }

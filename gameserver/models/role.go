@@ -68,17 +68,17 @@ func (m *RoleDBMgr) Update(ctx context.Context, role *Role) error {
 		return errors.NewResponseError(constant.DBError, err)
 	}
 
-	if err := m.cache.Update(ctx, role.UId, role); err != nil {
+	if err := m.cache.Update(ctx, role.RId, role); err != nil {
 		return errors.NewResponseError(constant.DBError, err)
 	}
 	return nil
 }
 
 // Get 获取角色数据
-func (m *RoleDBMgr) Get(ctx context.Context, uid int64) (*Role, error) {
-	ret, err := m.cache.GetOrSet(ctx, uid, new(Role), func() (interface{}, error) {
+func (m *RoleDBMgr) Get(ctx context.Context, rid int64) (*Role, error) {
+	ret, err := m.cache.GetOrSet(ctx, rid, new(Role), func() (interface{}, error) {
 		role := new(Role)
-		err := m.db.Where("uid =?", uid).First(role).Error
+		err := m.db.Where("rid =?", rid).First(role).Error
 		return role, err
 	})
 
@@ -90,4 +90,15 @@ func (m *RoleDBMgr) Get(ctx context.Context, uid int64) (*Role, error) {
 		return ret.(*Role), nil
 	}
 	return nil, nil
+}
+
+// GetAll 获取所有角色数据
+func (m *RoleDBMgr) GetAll(ctx context.Context, rid int64) ([]*Role, error) {
+	roles := make([]*Role, 0)
+	err := m.db.Where("rid =?", rid).Find(&roles).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return roles, errors.NewResponseError(constant.DBError, err)
+	}
+
+	return roles, nil
 }

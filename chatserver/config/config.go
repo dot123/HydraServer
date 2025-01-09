@@ -3,6 +3,7 @@ package config
 import (
 	"HydraServer/pkg/config"
 	"github.com/spf13/viper"
+	"time"
 )
 
 var (
@@ -19,9 +20,10 @@ func init() {
 }
 
 type Config struct {
-	PrintConfig bool
-	JAEGER      JAEGER
-	Log         Log
+	PrintConfig  bool
+	JAEGER       JAEGER
+	Log          Log
+	RedisBackend RedisBackend
 }
 
 type JAEGER struct {
@@ -37,4 +39,19 @@ type Log struct {
 	OutputFile    string
 	RotationCount int
 	RotationTime  int
+}
+
+type RedisBackend struct {
+	Addrs           []string
+	DB              int
+	MaxRetries      int
+	Username        string
+	Password        string
+	PoolSize        int
+	MinIdleConns    int
+	ConnMaxLifetime time.Duration
+	ConnMaxIdleTime time.Duration
+	DialTimeout     time.Duration
+	ReadTimeout     time.Duration
+	WriteTimeout    time.Duration
 }

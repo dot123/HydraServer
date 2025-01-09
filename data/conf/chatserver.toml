@@ -21,6 +21,28 @@ RotationCount = 48
 # 日志轮询时间周期 单位：秒
 RotationTime = 1800
 
+[RedisBackend]
+# 地址
+Addrs = ["localhost:6379"]
+DB = 0
+MaxRetries = 3
+Username = ""
+Password = ""
+# 连接池大小
+PoolSize = 2000
+# 最小空闲连接数
+MinIdleConns = 500
+# 连接最大生命周期（秒）
+ConnMaxLifetime = 1800
+# 连接在池中保持空闲的最大时间（秒）
+ConnMaxIdleTime = 600
+# 连接超时时间 5 秒
+DialTimeout = 5
+# 读取超时时间 3 秒
+ReadTimeout = 3
+# 写入超时时间 3 秒
+WriteTimeout = 3
+
 # 指标报告
 [metrics.statsd]
 enabled = false

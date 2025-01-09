@@ -82,9 +82,9 @@ func (m *Role) Create(ctx context.Context, msg *protos.CreateRoleReq) (*protos.C
 
 func (m *Role) ChangeNickName(ctx context.Context, msg *protos.ChangeNickNameReq) (*protos.ChangeNickNameRsp, error) {
 	session := m.app.GetSessionFromCtx(ctx)
-	uid := cast.ToInt64(session.Get(constant.UIdKey))
+	rid := cast.ToInt64(session.Get(constant.RIdKey))
 
-	err := m.roleLogic.ChangeNickName(ctx, uid, msg.NickName)
+	err := m.roleLogic.ChangeNickName(ctx, rid, msg.NickName)
 
 	return &protos.ChangeNickNameRsp{}, err
 }

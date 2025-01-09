@@ -8,13 +8,14 @@ package main
 
 import (
 	"HydraServer/chatserver/services"
+	"HydraServer/pkg/redisbackend"
 	"github.com/topfreegames/pitaya/v2"
 )
 
 // Injectors from wire.go:
 
-func BuildInjector(pitayaPitaya *pitaya.Pitaya) (*Injector, func(), error) {
-	chat := services.NewChatService(pitayaPitaya)
+func BuildInjector(pitayaPitaya *pitaya.Pitaya, redisBackend *redisbackend.RedisBackend) (*Injector, func(), error) {
+	chat := services.NewChatService(pitayaPitaya, redisBackend)
 	injector := &Injector{
 		ChatService: chat,
 		App:         pitayaPitaya,

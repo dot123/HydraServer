@@ -52,15 +52,17 @@ func (m *RoleLogic) Create(ctx context.Context, uid int64, msg *protos.CreateRol
 
 // Enter 角色进入
 func (m *RoleLogic) Enter(ctx context.Context, uid int64, username string, ip string) (*models.Role, error) {
-	role, err := m.roleDBMgr.Get(ctx, uid)
+	roles, err := m.roleDBMgr.GetAll(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
 
-	if role == nil {
+	if len(roles) == 0 {
 		return nil, errors.NewResponseError(constant.RoleNotExist, nil)
 	}
 
+	// 选择第一个角色
+	role := roles[0]
 	now := time.Now().Unix()
 	role.PreLoginTime = role.LastLoginTime
 	role.LastLoginTime = time.Now().Unix()
@@ -68,7 +70,7 @@ func (m *RoleLogic) Enter(ctx context.Context, uid int64, username string, ip st
 	// 执行每日任务
 	if role.UpdateDailyTime == 0 || utils.IsDifferentDays(time.Unix(role.UpdateDailyTime, 0), time.Unix(now, 0), "Asia/Shanghai") {
 		role.UpdateDailyTime = now
-		m.onDaily(ctx, uid)
+		m.onDaily(ctx, role.RId)
 	}
 
 	err = m.roleDBMgr.Update(ctx, role)
@@ -76,8 +78,8 @@ func (m *RoleLogic) Enter(ctx context.Context, uid int64, username string, ip st
 	return role, err
 }
 
-func (m *RoleLogic) ChangeNickName(ctx context.Context, uid int64, nickName string) error {
-	role, err := m.roleDBMgr.Get(ctx, uid)
+func (m *RoleLogic) ChangeNickName(ctx context.Context, rid int64, nickName string) error {
+	role, err := m.roleDBMgr.Get(ctx, rid)
 	if err != nil {
 		return err
 	}
@@ -90,6 +92,6 @@ func (m *RoleLogic) ChangeNickName(ctx context.Context, uid int64, nickName stri
 	return m.roleDBMgr.Update(ctx, role)
 }
 
-func (m *RoleLogic) onDaily(ctx context.Context, uid int64) {
+func (m *RoleLogic) onDaily(ctx context.Context, rid int64) {
 
 }

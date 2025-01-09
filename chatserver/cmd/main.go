@@ -6,10 +6,12 @@ import (
 	"HydraServer/pkg/errors"
 	"HydraServer/pkg/log"
 	"HydraServer/pkg/msgpack"
+	"HydraServer/pkg/redisbackend"
 	"HydraServer/pkg/utils"
 	"context"
 	"flag"
 	"fmt"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
@@ -26,12 +28,13 @@ import (
 	"github.com/topfreegames/pitaya/v2/tracing/jaeger"
 	"os"
 	"strings"
+	"time"
 )
 
 var App pitaya.Pitaya
 
-func configureBackend() func() {
-	injector, cleanup, err := BuildInjector(&App)
+func configureBackend(redisBackend *redisbackend.RedisBackend) func() {
+	injector, cleanup, err := BuildInjector(&App, redisBackend)
 	if err != nil {
 		panic(err)
 	}
@@ -77,6 +80,28 @@ func afterHandler(ctx context.Context, resp interface{}, err error) (interface{}
 
 	}
 	return resp, err
+}
+
+func initRedisBackend(logger logrus.FieldLogger) *redisbackend.RedisBackend {
+	logger.Infoln("initRedisBackend")
+
+	redisBackendConfig := config.C.RedisBackend
+	redisBackend := redisbackend.NewRedisBackend(&redis.UniversalOptions{
+		Addrs:           redisBackendConfig.Addrs,
+		Username:        redisBackendConfig.Username,
+		Password:        redisBackendConfig.Password,
+		DB:              redisBackendConfig.DB,
+		MaxRetries:      redisBackendConfig.MaxRetries,
+		DialTimeout:     redisBackendConfig.DialTimeout * time.Second,     // 连接超时时间
+		ReadTimeout:     redisBackendConfig.ReadTimeout * time.Second,     // 读取超时时间
+		WriteTimeout:    redisBackendConfig.WriteTimeout * time.Second,    // 写入超时时间
+		ConnMaxIdleTime: redisBackendConfig.ConnMaxIdleTime * time.Second, // 连接池中连接的最大闲置时间
+		ConnMaxLifetime: redisBackendConfig.ConnMaxLifetime * time.Second, // 连接最大生命周期
+		PoolSize:        redisBackendConfig.PoolSize,                      // 连接池大小
+		MinIdleConns:    redisBackendConfig.MinIdleConns,                  // 最小空闲连接数
+		TLSConfig:       nil,
+	})
+	return redisBackend
 }
 
 func main() {
@@ -130,7 +155,9 @@ func main() {
 		}
 	}
 
-	cleanup := configureBackend()
+	redisBackend := initRedisBackend(plog)
+
+	cleanup := configureBackend(redisBackend)
 
 	defer func() {
 		app.Shutdown()
