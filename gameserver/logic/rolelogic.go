@@ -73,7 +73,7 @@ func (m *RoleLogic) Enter(ctx context.Context, uid int64, username string, ip st
 		m.onDaily(ctx, role.RId)
 	}
 
-	err = m.roleDBMgr.Update(ctx, role)
+	m.roleDBMgr.Push(ctx, role)
 
 	return role, err
 }
@@ -89,7 +89,9 @@ func (m *RoleLogic) ChangeNickName(ctx context.Context, rid int64, nickName stri
 	}
 	role.NickName = nickName
 
-	return m.roleDBMgr.Update(ctx, role)
+	m.roleDBMgr.Push(ctx, role)
+
+	return nil
 }
 
 func (m *RoleLogic) onDaily(ctx context.Context, rid int64) {

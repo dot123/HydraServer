@@ -24,4 +24,5 @@ func (m *GateLogic) OnEnter(uid int64) {
 
 func (m *GateLogic) OnExit(uid int64) {
 	m.log.Infof("uid(%d)玩家退出", uid)
+	// Todo通知游戏服务保存玩家数据
 }

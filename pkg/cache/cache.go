@@ -10,7 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/singleflight"
 	"reflect"
-	"time"
 )
 
 type Cache struct {
@@ -81,7 +80,7 @@ func (c *Cache) Update(ctx context.Context, key interface{}, table interface{}) 
 	}
 
 	// 将结果存入缓存
-	err = c.client.Set(ctx, cacheKey, b, time.Minute*5).Err()
+	err = c.client.Set(ctx, cacheKey, b, redis.KeepTTL).Err()
 	if err != nil {
 		c.log.Error("Failed to set cache", err)
 	}

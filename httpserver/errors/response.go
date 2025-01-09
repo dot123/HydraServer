@@ -1,6 +1,9 @@
 package errors
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // ResponseError 定义响应错误
 type ResponseError struct {
@@ -18,7 +21,8 @@ func (r *ResponseError) Error() string {
 }
 
 func UnWrapResponse(err error) *ResponseError {
-	if v, ok := err.(*ResponseError); ok {
+	var v *ResponseError
+	if errors.As(err, &v) {
 		return v
 	}
 	return nil
