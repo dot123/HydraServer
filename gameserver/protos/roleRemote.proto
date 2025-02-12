@@ -13,3 +13,11 @@ message GetRoleRsp {
   int64 RId = 1;
   Role Role = 2;
 }
+
+message LogoutReq {
+  int64 RId = 1;
+}
+
+message LogoutRsp {
+
+}

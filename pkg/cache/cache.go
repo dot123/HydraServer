@@ -29,7 +29,7 @@ func NewCache(redisBackend *redisbackend.RedisBackend, log logrus.FieldLogger) *
 
 // GetOrSet 通用的获取数据函数，支持缓存和数据库查询
 func (c *Cache) GetOrSet(ctx context.Context, key interface{}, table interface{}, query func() (interface{}, error)) (interface{}, error) {
-	cacheKey := genCacheKey(key, table)
+	cacheKey := c.GenCacheKey(key, table)
 	// 使用 singleflight 防止缓存击穿
 	val, err, _ := c.g.Do(cacheKey, func() (interface{}, error) {
 		// 先尝试从缓存获取
@@ -72,7 +72,7 @@ func (c *Cache) Del(ctx context.Context, keys ...string) error {
 
 // Update 更新缓存
 func (c *Cache) Update(ctx context.Context, key interface{}, table interface{}) error {
-	cacheKey := genCacheKey(key, table)
+	cacheKey := c.GenCacheKey(key, table)
 
 	b, err := json.Marshal(table)
 	if err != nil {
@@ -87,8 +87,8 @@ func (c *Cache) Update(ctx context.Context, key interface{}, table interface{}) 
 	return err
 }
 
-// genCacheKey 生成缓存的键，使用反射调用 TableName 方法
-func genCacheKey(key interface{}, table interface{}) string {
+// GenCacheKey 生成缓存的键，使用反射调用 TableName 方法
+func (c *Cache) GenCacheKey(key interface{}, table interface{}) string {
 	val := reflect.ValueOf(table)
 
 	// 确保传入的是指针类型

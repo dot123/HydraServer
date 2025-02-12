@@ -184,7 +184,10 @@ func main() {
 
 	sessionPool.OnSessionClose(func(s session.Session) {
 		if s.UID() != "" {
-			gateLogic.OnExit(cast.ToInt64(s.UID()))
+			rid := cast.ToInt64(s.Get(constant.RIdKey))
+			servers, _ := app.GetServersByType("game")
+			serverKey := cast.ToString(s.Get(constant.ServerKey))
+			gateLogic.OnExit(cast.ToInt64(s.UID()), rid, servers[serverKey])
 		}
 	})
 

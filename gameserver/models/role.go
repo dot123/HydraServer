@@ -63,10 +63,7 @@ func (m *RoleDBMgr) running() {
 		select {
 		case role := <-m.roles:
 			if role.RId > 0 {
-				// 保存到数据库和更新缓存
-				if err := m.db.Save(role).Error; err != nil {
-					m.log.Errorf("db error:%v\n", err)
-				}
+				// 更新缓存
 				if err := m.cache.Update(context.TODO(), role.RId, role); err != nil {
 					m.log.Errorf("cache error:%v\n", err)
 				}
@@ -119,4 +116,13 @@ func (m *RoleDBMgr) GetAll(ctx context.Context, rid int64) ([]*Role, error) {
 	}
 
 	return roles, nil
+}
+
+// Save 保存角色数据
+func (m *RoleDBMgr) Save(ctx context.Context, role *Role) error {
+	err := m.db.Save(role).Error
+	if err != nil {
+		m.log.Errorf("db error:%v\n", err)
+	}
+	return err
 }
