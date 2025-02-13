@@ -26,8 +26,8 @@ func BuildInjector(pitayaPitaya *pitaya.Pitaya, redisBackend *redisbackend.Redis
 	cacheCache := cache.NewCache(redisBackend, fieldLogger)
 	roleDBMgr := models.NewRoleDBMgr(db, cacheCache, fieldLogger)
 	roleLogic := logic.NewRoleLogic(pitayaPitaya, roleDBMgr)
-	role := services.NewRoleService(pitayaPitaya, roleLogic)
-	roleRemote := services.NewRoleRemoteService(pitayaPitaya, cacheCache, roleDBMgr)
+	roleRemote := services.NewRoleRemoteService(pitayaPitaya, cacheCache, roleDBMgr, fieldLogger)
+	role := services.NewRoleService(pitayaPitaya, roleLogic, roleRemote)
 	injector := &Injector{
 		RoleService:       role,
 		RoleRemoteService: roleRemote,

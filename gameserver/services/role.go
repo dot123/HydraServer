@@ -17,15 +17,17 @@ import (
 
 type Role struct {
 	component.Base
-	app       pitaya.Pitaya
-	timer     *timer.Timer
-	roleLogic *logic.RoleLogic
+	app        pitaya.Pitaya
+	timer      *timer.Timer
+	roleLogic  *logic.RoleLogic
+	roleRemote *RoleRemote
 }
 
-func NewRoleService(app *pitaya.Pitaya, roleMgr *logic.RoleLogic) *Role {
+func NewRoleService(app *pitaya.Pitaya, roleMgr *logic.RoleLogic, roleRemote *RoleRemote) *Role {
 	m := &Role{
-		app:       *app,
-		roleLogic: roleMgr,
+		app:        *app,
+		roleLogic:  roleMgr,
+		roleRemote: roleRemote,
 	}
 	return m
 }
@@ -55,6 +57,11 @@ func (m *Role) EnterServer(ctx context.Context, msg *protos.EnterServerReq) (*pr
 	role, err := m.roleLogic.Enter(ctx, user.UId, user.Username, ip)
 	if err != nil {
 		return nil, err
+	}
+
+	// 取消该角色的退出定时器
+	if m.roleRemote != nil {
+		m.roleRemote.CancelLogoutTimer(role.RId)
 	}
 
 	s.Set(constant.RIdKey, role.RId)

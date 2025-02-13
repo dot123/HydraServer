@@ -20,4 +20,5 @@ const (
     ReLoginFail = 13                             // 重新登录失败
     LoginExpired = 14                            // 登录已过期，请重新登录
     NoServersAvailable = 15                      // 没有服务器可用
+    ServerBusy = 16                              // 服务器繁忙
 )
